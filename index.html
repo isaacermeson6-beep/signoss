@@ -1,9 +1,57 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Meu Site</title>
-</head>
-<body>
-    <h1>Funcionando 🚀</h1>
-</body>
-</html>
+import ipywidgets as widgets
+from IPython.display import display, HTML
+
+# -------- INTERFACE IPYWIDGETS -------- #
+
+# Widgets de entrada
+dia_widget = widgets.IntSlider(min=1, max=31, value=1, description='Dia:')
+mes_widget = widgets.IntSlider(min=1, max=12, value=1, description='Mês:')
+hora_widget = widgets.IntSlider(min=0, max=23, value=0, description='Hora (0-23):')
+
+# Widget de saída
+output_widget = widgets.Output()
+
+def calcular_ipywidgets(dia, mes, hora):
+    with output_widget: # Redireciona a saída para o widget
+        output_widget.clear_output() # Limpa a saída anterior
+        try:
+            # As funções descobrir_signo e calcular_ascendente precisam ser definidas
+            # ou a célula que as define (ea92cf40) deve ser executada primeiro.
+            if not (1 <= dia <= 31 and 1 <= mes <= 12 and 0 <= hora <= 23):
+                print(HTML("<p style='color:red;'>Erro: Digite apenas números válidos!</p>"))
+                return
+
+            signo, elemento = descobrir_signo(dia, mes)
+            ascendente = calcular_ascendente(hora)
+
+            if signo:
+                result_html = (
+                    f"<p style='font-size:16px;'>🔮 Signo: <b>{signo}</b></p>"
+                    f"<p style='font-size:16px;'>🔥 Elemento: <b>{elemento}</b></p>"
+                    f"<p style='font-size:16px;'>⭐ Ascendente: <b>{ascendente}</b></p>"
+                )
+                print(HTML(result_html))
+            else:
+                print(HTML("<p style='color:red;'>Erro: Data inválida!</p>"))
+
+        except ValueError:
+            print(HTML("<p style='color:red;'>Erro: Digite apenas números válidos!</p>"))
+
+
+# Botão para calcular
+calcular_button = widgets.Button(description="Calcular Signo e Ascendente")
+
+def on_button_click(b):
+    calcular_ipywidgets(dia_widget.value, mes_widget.value, hora_widget.value)
+
+calcular_button.on_click(on_button_click)
+
+# Exibir a interface
+display(widgets.VBox([
+    widgets.Label(value="Descubra seu Signo e Ascendente"),
+    dia_widget,
+    mes_widget,
+    hora_widget,
+    calcular_button,
+    output_widget
+]))
